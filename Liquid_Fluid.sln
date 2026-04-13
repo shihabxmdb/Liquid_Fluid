@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37111.16 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Liquid_Fluid", "Liquid_Fluid.csproj", "{7E6D09D3-DC05-4AA8-B480-77424B0E7E68}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E6D09D3-DC05-4AA8-B480-77424B0E7E68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E6D09D3-DC05-4AA8-B480-77424B0E7E68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E6D09D3-DC05-4AA8-B480-77424B0E7E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E6D09D3-DC05-4AA8-B480-77424B0E7E68}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EE22AA2E-F378-47BC-B247-61159E8FAC0D}
+	EndGlobalSection
+EndGlobal
