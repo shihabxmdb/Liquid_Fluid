@@ -1,0 +1,61 @@
+﻿<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>{{ title | default: "AdminLTE v4 | Dashboard" }}</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" crossorigin="anonymous" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+			<link rel="stylesheet" href="/adminlte-4-beta3/css/adminlte.css" />
+
+			{{ page_styles }}
+		</head>
+
+	<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+		<div class="app-wrapper">
+			<nav class="app-header navbar navbar-expand bg-body">
+				<div class="container-fluid">
+					<ul class="navbar-nav">
+						<li class="nav-item">
+							<a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+								<i class="bi bi-list"></i>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+
+			<aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+				<div class="sidebar-brand">
+					<a href="/" class="brand-link">
+						<img src="/adminlte-4-beta3/assets/img/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
+						<span class="brand-text fw-light">AdminLTE 4</span>
+					</a>
+				</div>
+				{% render "_LeftMenuPartial" %}
+			</aside>
+
+			<main class="app-main">
+				{{ content }}
+			</main>
+
+			<footer class="app-footer">
+				<strong>Copyright copy; 2026 AdminLTE.io</strong>
+			</footer>
+		</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+		<script src="/adminlte-4-beta3/js/adminlte.js"></script>
+
+		<script>
+			// ... Your existing OverlayScrollbars config ...
+		</script>
+
+		{{ page_scripts }}
+	</body>
+</html>
