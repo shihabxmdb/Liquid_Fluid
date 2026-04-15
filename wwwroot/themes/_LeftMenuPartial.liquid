@@ -20,13 +20,13 @@
 				</a>
 				<ul class="nav nav-treeview">
 					<li class="nav-item">
-						<a href="/index1" class="nav-link {% if Request.Path == '/' or Request.Path contains 'index1' %}active{% endif %}">
+						<a href="/index1" class="nav-link {% if Request.Path contains 'index1' %}active{% endif %}">
 							<i class="nav-icon bi bi-circle"></i>
 							<p>Dashboard v1</p>
 						</a>
 					</li>
 					<li class="nav-item">
-						<a href="/index2.html" class="nav-link {% if Request.Path contains 'index2.html' %}active{% endif %}">
+						<a href="/index2" class="nav-link {% if Request.Path contains 'index2.html' %}active{% endif %}">
 							<i class="nav-icon bi bi-circle"></i>
 							<p>Dashboard v2</p>
 						</a>

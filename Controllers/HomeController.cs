@@ -16,14 +16,11 @@ namespace Liquid_Fluid.Controllers
        
         private static readonly FluidParser _parser = new FluidParser();
 
-        private readonly IWebHostEnvironment _env;
-
         private readonly IThemeService _themeService;
 
-        public HomeController(ILogger<HomeController> logger,IThemeService themeService,IWebHostEnvironment env)
+        public HomeController(ILogger<HomeController> logger,IThemeService themeService)
         {
             _logger = logger;
-            _env = env;
             _themeService = themeService;
         }
 
@@ -35,12 +32,7 @@ namespace Liquid_Fluid.Controllers
             //////options.MemberAccessStrategy.Register(new { Message = "" }.GetType());
             //options.MemberAccessStrategy.Register<object>();
 
-
-
-            // 1. Render the inner page (home.liquid)
-            //var homeFile = _service.fileProvider.GetFileInfo("home.liquid");
-
-            //Get fileProvider
+           //Get fileProvider
             var fileProvider = _themeService.GetFileProvider();
 
             // 1. Render the inner page (home.liquid)
@@ -54,6 +46,9 @@ namespace Liquid_Fluid.Controllers
 
             var context = new TemplateContext(new { Message = "Student Info" }, options);
             var bodyContent = await homeTemplate.RenderAsync(context);
+
+            //var context = new TemplateContext(new {}, options);
+            //var bodyContent = await homeTemplate.RenderAsync();
 
             // 2. Render the layout and inject the bodyContent
             var layoutFile = fileProvider.GetFileInfo("layout.liquid");
@@ -82,13 +77,9 @@ namespace Liquid_Fluid.Controllers
         public async Task<IActionResult> Index1()
         {
             var fileProvider = _themeService.GetFileProvider(); // Get your provider
-            var fileInfo = fileProvider.GetFileInfo("index1.liquid");
+            var file = fileProvider.GetFileInfo("index1.liquid");
 
-            string source;
-            using (var reader = new StreamReader(fileInfo.CreateReadStream()))
-            {
-                source = await reader.ReadToEndAsync();
-            }
+            string source = await ReadFile(file);
 
             // --- CRITICAL PART ---
             var context = new TemplateContext();
@@ -118,48 +109,41 @@ namespace Liquid_Fluid.Controllers
             return Content($"Error: {error}", "text/plain");
         }
 
-        //  [HttpGet("/index1")]
-        ////[HttpGet("/")]
-        //public async Task<IActionResult> Index1()
-        //{
-        //    // 1. Get the path to your index.liquid file via PhysicalFileProvider
-        //    var _fileProvider = _themeService.GetFileProvider();
-        //    var fileInfo = _fileProvider.GetFileInfo("index1.liquid");
+        [HttpGet("/index2")]
+        public async Task<IActionResult> Index2()
+        {
+            var fileProvider = _themeService.GetFileProvider(); // Get your provider
+            var file = fileProvider.GetFileInfo("index2.liquid");
 
-        //    // 2. Read the content
-        //    string source;
-        //    using (var reader = new StreamReader(fileInfo.CreateReadStream()))
-        //    {
-        //        source = await reader.ReadToEndAsync();
-        //    }
+            string source = await ReadFile(file);
 
-        //    // 3. Set up Fluid context (Pass the Request Path so the sidebar 'active' class works)
-        //    var context = new TemplateContext();
-        //    context.SetValue("Request", new { Path = Request.Path.Value });
+            // --- CRITICAL PART ---
+            var context = new TemplateContext();
+            // Assign the FileProvider so Fluid can resolve includes/partials
+            context.Options.FileProvider = fileProvider;
 
-        //    // 4. Parse and Render
-        //    _parser.TryParse(source, out var template, out var error);
+            context.SetValue("Request", new { Path = Request.Path.Value });
 
-        //    var bodyContent = await template.RenderAsync(context);
+            // Parse and Render Index
+            if (_parser.TryParse(source, out var template, out var error))
+            {
+                var bodyContent = await template.RenderAsync(context);
 
-        //    // 2. Render the layout and inject the bodyContent
-        //    var fileProvider = _themeService.GetFileProvider();
-        //    var layoutFile = fileProvider.GetFileInfo("layout.liquid");
-        //    string layoutSource = await ReadFile(layoutFile);
+                // Render the layout
+                var layoutFile = fileProvider.GetFileInfo("layout.liquid");
+                string layoutSource = await ReadFile(layoutFile);
 
-        //    if (_parser.TryParse(layoutSource, out var layoutTemplate))
-        //    {
-        //        // Inject the already-rendered HTML into the "content" variable
-        //        context.SetValue("content", bodyContent);
-        //        var finalHtml = await layoutTemplate.RenderAsync(context);
+                if (_parser.TryParse(layoutSource, out var layoutTemplate))
+                {
+                    context.SetValue("content", bodyContent);
+                    var finalHtml = await layoutTemplate.RenderAsync(context);
 
-        //        return Content(finalHtml, "text/html");
-        //    }
+                    return Content(finalHtml, "text/html");
+                }
+            }
 
-        //    return Content("Error loading layout", "text/plain");
-
-
-        //}
+            return Content($"Error: {error}", "text/plain");
+        }
 
         //public async Task<IActionResult> Index()
         //{

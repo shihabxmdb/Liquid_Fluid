@@ -36,13 +36,7 @@ namespace Liquid_Fluid.Services
             ////options.MemberAccessStrategy.Register(new { Message = "" }.GetType());
             options.MemberAccessStrategy.Register<object>();
             return options;
-            //return new TemplateOptions
-            //{
-            //    FileProvider = _fileProvider,
-            //    // Registering <object> allows global access, 
-            //    // but be mindful of security in production!
-            //    MemberAccessStrategy = { MemberAccessStrategy = MemberAccessStrategy.AlwaysAllow }
-            //};
+           
         }
     }
 }
