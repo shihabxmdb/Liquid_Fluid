@@ -23,47 +23,95 @@ namespace Liquid_Fluid.Controllers
             _logger = logger;
             _themeService = themeService;
         }
-
+        [HttpGet("/index")]
+        [HttpGet("/")]
         public async Task<IActionResult> Index()
         {
-            //var themeRoot = Path.Combine(_env.WebRootPath, "themes");
-            //var fileProvider = new PhysicalFileProvider(themeRoot);
-            //var options = new TemplateOptions { FileProvider = fileProvider };
-            //////options.MemberAccessStrategy.Register(new { Message = "" }.GetType());
-            //options.MemberAccessStrategy.Register<object>();
+            var students = new List<Student>
+            {
+                new Student
+                {
+                    Id = 1,
+                    Name = "Rahim",
+                    Age = 20,
+                    Contact = new Contact
+                    {
+                        Email = "rahim@gmail.com",
+                        Phone = "01700000000"
+                    },
+                    Address = new Address
+                    {
+                        City = "Dhaka",
+                        Zip = "1207"
+                    },
+                    Courses = new List<Course>
+                    {
+                        new Course { CourseId = "C101", CourseName = "Math", Marks = 85 },
+                        new Course { CourseId = "C102", CourseName = "English", Marks = 78 }
+                    }
+                },
+                new Student
+                {
+                    Id = 2,
+                    Name = "Karim",
+                    Age = 22,
+                    Contact = new Contact
+                    {
+                        Email = "karim@gmail.com",
+                        Phone = "01800000000"
+                    },
+                    Address = new Address
+                    {
+                        City = "Sylhet",
+                        Zip = "3100"
+                    },
+                    Courses = new List<Course>
+                    {
+                        new Course { CourseId = "C101", CourseName = "Math", Marks = 90 },
+                        new Course { CourseId = "C102", CourseName = "ENG", Marks = 90 }
+                    }
+                }
+            };
 
-           //Get fileProvider
+            //Get fileProvider
             var fileProvider = _themeService.GetFileProvider();
 
-            // 1. Render the inner page (home.liquid)
-            var homeFile = fileProvider.GetFileInfo("home.liquid");
+            // 1. Load home file
+            var homeFile = fileProvider.GetFileInfo("index.liquid");
+
+            if (!homeFile.Exists)
+                return Content("index.liquid not found", "text/plain");
 
             string homeSource = await ReadFile(homeFile);
-            _parser.TryParse(homeSource, out var homeTemplate, out var error);
 
-            //Get options 
+            if (!_parser.TryParse(homeSource, out var homeTemplate, out var error))
+                return Content($"Parse error: {error}", "text/plain");
+
+            // Context
             var options = _themeService.GetTemplateOptions();
+            var context = new TemplateContext(new { Students = students }, options);
 
-            var context = new TemplateContext(new { Message = "Student Info" }, options);
+            context.SetValue("Request", new { Path = Request.Path.Value });
+
+            // Render body
             var bodyContent = await homeTemplate.RenderAsync(context);
 
-            //var context = new TemplateContext(new {}, options);
-            //var bodyContent = await homeTemplate.RenderAsync();
-
-            // 2. Render the layout and inject the bodyContent
+            // 2. Layout
             var layoutFile = fileProvider.GetFileInfo("layout.liquid");
+
+            if (!layoutFile.Exists)
+                return Content("layout.liquid not found", "text/plain");
+
             string layoutSource = await ReadFile(layoutFile);
 
-            if (_parser.TryParse(layoutSource, out var layoutTemplate))
-            {
-                // Inject the already-rendered HTML into the "content" variable
-                context.SetValue("content", bodyContent);
-                var finalHtml = await layoutTemplate.RenderAsync(context);
+            if (!_parser.TryParse(layoutSource, out var layoutTemplate, out var layoutError))
+                return Content($"Layout parse error: {layoutError}", "text/plain");
 
-                return Content(finalHtml, "text/html");
-            }
+            context.SetValue("content", bodyContent);
 
-            return Content("Error loading layout", "text/plain");
+            var finalHtml = await layoutTemplate.RenderAsync(context);
+
+            return Content(finalHtml, "text/html");
         }
 
         private async Task<string> ReadFile(IFileInfo fileInfo)
@@ -73,11 +121,11 @@ namespace Liquid_Fluid.Controllers
             return await reader.ReadToEndAsync();
         }
 
-        [HttpGet("/index1")]
+        //[HttpGet("/index")]
         public async Task<IActionResult> Index1()
         {
             var fileProvider = _themeService.GetFileProvider(); // Get your provider
-            var file = fileProvider.GetFileInfo("index1.liquid");
+            var file = fileProvider.GetFileInfo("index.liquid");
 
             string source = await ReadFile(file);
 
@@ -144,123 +192,6 @@ namespace Liquid_Fluid.Controllers
 
             return Content($"Error: {error}", "text/plain");
         }
-
-        //public async Task<IActionResult> Index()
-        //{
-        //    var themeRoot = Path.Combine(_env.WebRootPath, "themes");
-        //    var fileProvider = new PhysicalFileProvider(themeRoot);
-
-        //    // List all files the provider can see
-        //    //var contents = fileProvider.GetDirectoryContents("");
-        //    //foreach (var item in contents)
-        //    //{
-        //    //    Console.WriteLine($"Found file: {item.Name}");
-        //    //}
-
-        //    var relativePath = "home.liquid";
-        //    var fileInfo = fileProvider.GetFileInfo(relativePath);
-
-        //    if (!fileInfo.Exists) 
-        //        return NotFound();
-
-        //    // 1. Better approach: Use a cache here so you don't parse every time
-        //    string source;
-        //    using (var stream = fileInfo.CreateReadStream())
-        //    using (var reader = new StreamReader(stream))
-        //    {
-        //        source = await reader.ReadToEndAsync();
-        //    }
-
-        //    if (_parser.TryParse(source, out var template, out var error))
-        //    {
-        //        var model = new { Message = "Hello World!" };
-
-        //        // 2. MUST register members or Liquid won't see them
-        //        var options = new TemplateOptions();
-        //        options.MemberAccessStrategy.Register(model.GetType());
-
-        //        // 3. Allow {% include %} tags to work
-        //        options.FileProvider = fileProvider;
-
-        //        var context = new TemplateContext(model, options);
-
-
-
-
-        //        var html = await template.RenderAsync(context);
-        //        return Content(html, "text/html");
-        //    }
-
-        //    return Content($"Liquid Error: {error}", "text/plain");
-        //}
-
-        //public async Task<IActionResult> Index()
-        //{
-        //    // 1. Setup paths (Assuming 'themes' folder is in your project root)
-        //    var themeRoot = Path.Combine(_env.ContentRootPath, "themes");
-        //    if (!Directory.Exists(themeRoot))
-        //    {
-        //        Directory.CreateDirectory(themeRoot);
-        //    }
-        //    var fileProvider = new PhysicalFileProvider(themeRoot);
-
-        //    // Example: "tenant1/v1.0/templates/home.liquid"
-        //    // Note: Ensure tenant and ThemeId are resolved from your logic/database
-        //    //var relativePath = $"tenant_{tenant.StoreId}/{tenant.ThemeId}/templates/home.liquid";
-
-        //    // 2. Just look for the file name directly
-        //    var relativePath = "home.liquid";
-
-        //    var fileInfo = fileProvider.GetFileInfo(relativePath);
-
-        //    if (!fileInfo.Exists)
-        //    {
-        //        return NotFound($"Template not found at: {relativePath}");
-        //    }
-
-        //    // 2. Read the file from hard disk
-        //    string source;
-        //    using (var stream = fileInfo.CreateReadStream())
-        //    using (var reader = new StreamReader(stream))
-        //    {
-        //        source = await reader.ReadToEndAsync();
-        //    }
-
-        //    // 3. Parse the Liquid source
-        //    if (_parser.TryParse(source, out var template, out var error))
-        //    {
-        //        // 4. Fetch your data model
-        //        //var model = await _storefrontService.BuildHomeModelAsync(tenant.StoreId);
-
-        //        // 4. Create the "Model" (the data you want to send to the template)
-        //        var model = new { Message = "Hello World from C#!" };
-
-
-        //        // 5. Configure Fluid Context
-        //        //var options = new TemplateOptions();
-
-        //        // CRITICAL: This allows Fluid to see your C# properties
-        //        // You can register specific types, or use 'RegisterAny' for flexibility (dev only)
-        //        //options.MemberAccessStrategy.Register(model.GetType());
-
-        //        //var context = new TemplateContext(model, options);
-        //        var context = new TemplateContext(model);
-
-        //        // Allow the template to find partials (like {% include 'header' %}) on disk
-        //        //context.FileProvider = fileProvider;
-
-        //        // 6. Render and return
-        //        var html = await template.RenderAsync(context);
-        //        return Content(html, "text/html");
-        //    }
-        //    else
-        //    {
-        //        // Return the error so you can see what's wrong with your Liquid syntax
-        //        return Content($"Liquid Syntax Error: {error}", "text/plain");
-        //    }
-        //    return View();
-        //}
-
         public IActionResult Privacy()
         {
             return View();
