@@ -16,6 +16,6 @@ jobs:
 
       - name: Print Github Context
         env:
-          Github_Context: {{ toJson(github)}}
+          Github_Context: ${{ toJson(github)}}
         run: echo "$Github_Context"
 
