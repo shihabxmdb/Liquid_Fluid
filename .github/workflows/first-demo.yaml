@@ -11,5 +11,7 @@ jobs:
       - run: echo "Action started"
       - name: Chekout
         uses: actions/checkout@v4
+      - name: Show Files
+        run: ls
       - name: Run a one line script
         run: echo "Hello World"
