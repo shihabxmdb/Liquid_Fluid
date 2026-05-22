@@ -11,16 +11,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: List files
+        run: ls ${{github.workspace}}
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 10.0.x
+      - name: Print Github Context
+        env:
+          Github_Context: {{ toJson(github)}}
+        run: echo "$Github_Context"
+      # - name: Checkout Code
+      #   uses: actions/checkout@v4
+    
+      # - name: Setup .NET
+      #   uses: actions/setup-dotnet@v4
+      #   with:
+      #     dotnet-version: 10.0.x
 
-      - name: Restore Packages
-        run: dotnet restore
+      # - name: Restore Packages
+      #   run: dotnet restore
 
-      - name: Build Project
-        run: dotnet build --no-restore
+      # - name: Build Project
+      #   run: dotnet build --no-restore
